@@ -1,0 +1,73 @@
+import os
+import subprocess
+
+def configure_git(name, email, editor):
+    """Configure Git with user name, email, and editor."""
+    subprocess.run(['git', 'config', '--global', 'user.name', name], check=True)
+    subprocess.run(['git', 'config', '--global', 'user.email', email], check=True)
+    subprocess.run(['git', 'config', '--global', 'core.editor', editor], check=True)
+    print(f"Git configured with name: {name}, email: {email}, editor: {editor}")
+
+def clone_repository(repo_url, destination):
+    """Clone a GitHub repository to the specified directory."""
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+    os.chdir(destination)
+    subprocess.run(['git', 'clone', repo_url], check=True)
+    print(f"Repository cloned to {destination}")
+
+def add_python_script(file_path):
+    """Create a Python script with a sample function."""
+    with open(file_path, 'w') as file:
+        file.write("""\
+def hello():
+    print("hello")
+""")
+    subprocess.run(['git', 'add', file_path], check=True)
+    subprocess.run(['git', 'commit', '-m', 'Add initial script with hello function'], check=True)
+    subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+    print(f"Script added and committed: {file_path}")
+
+def update_python_script(file_path):
+    """Update the Python script with an additional function."""
+    with open(file_path, 'a') as file:
+        file.write("""\
+def goodbye():
+    print("goodbye")
+""")
+    subprocess.run(['git', 'add', file_path], check=True)
+    subprocess.run(['git', 'commit', '-m', 'Add goodbye function'], check=True)
+    subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+    print(f"Script updated and committed: {file_path}")
+
+def main():
+    """Main function to execute the GitHub workflow."""
+    # Replace these values with your actual information
+    git_user_name = "Your Name"
+    git_user_email = "your.email@example.com"
+    git_editor = "nano"  # Or your preferred editor
+
+    # Replace with your repository URL and desired local directory
+    repo_url = "https://github.com/yourusername/yourrepository.git"
+    clone_dir = "yourrepository"
+
+    # Configure Git
+    configure_git(git_user_name, git_user_email, git_editor)
+
+    # Clone the repository
+    clone_repository(repo_url, clone_dir)
+
+    # Navigate to the cloned repository directory
+    os.chdir(clone_dir)
+
+    # Add initial Python script
+    script_path = "script.py"
+    add_python_script(script_path)
+
+    # Pull changes and update script
+    subprocess.run(['git', 'pull', 'origin', 'main'], check=True)
+    update_python_script(script_path)
+
+if __name__ == "__main__":
+    main()
+
